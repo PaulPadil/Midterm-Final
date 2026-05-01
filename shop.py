@@ -55,7 +55,7 @@ def armour_shop():
     armour_def = [10, 20]
 
     while True:
-        print("\n=== Armour Shop ===")
+        print("\033[33m=== Armour Shop ===\033[0m")
         print("Gold:", player.gold)
 
         for i in range(len(armour_names)):
@@ -82,6 +82,3 @@ def armour_shop():
             print("Bought!")
         else:
             print("Not enough gold!")
-
-
-    

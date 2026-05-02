@@ -7,17 +7,21 @@ from save_load import load_game, save_game
 
 def main_menu():
     while True:
-        print("\n=== MENU ===")
-        print("1. Weapon Shop")
-        print("2. Armour Shop")
-        print("3. Inventory")
-        print("4. Stats")
-        print("5. Equip")
-        print("6. Unequip")
-        print("7. Sell item")
-        print("8. Exit")
+        print("\n\033[33m=== Shop Menu ===\033[0m\n")
+        print("\033[32m1. Weapon Shop\033[0m")
+        print("\033[32m2. Armour Shop\033[0m")
+        print("\033[32m3. Inventory\033[0m")
+        print("\033[32m4. Use / Consume Item\033[0m")
+        print("\033[32m5. Unequip Item\033[0m")
+        print("\033[32m6. Sell Item\033[0m")
+        print("\033[32m7. Statistics\033[0m")
+        print("\033[31m8. Exit\033[0m\n")
 
-        choice = input("Choice: ")
+        choice = input("\033[32mChoose: \033[0m")
+
+        if choice not in ["1", "2", "3", "4", "5", "6", "7", "8"]:
+            print("\033[31mInvalid choice! Please choose a number from 1 to 8c.\033[0m")
+            continue
 
         if choice == "1":
             weapon_shop()
@@ -29,16 +33,16 @@ def main_menu():
             show_inventory()
 
         elif choice == "4":
-            show_stats()
-
-        elif choice == "5":
             use_item()
 
-        elif choice == "6":
+        elif choice == "5":
             unequip_item()
 
-        elif choice == "7":
+        elif choice == "6":
             sell_item()
+
+        elif choice == "7":
+            show_stats()
 
         elif choice == "8":
             save_game()

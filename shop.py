@@ -15,19 +15,21 @@ def save_item(item_type, item_name, power, price):
 
 
 def weapon_shop():
-    weapon_names = ["Sword", "Axe"]
-    weapon_prices = [100, 200]
-    weapon_attacks = [10, 20]
+    weapon_names = ["\033[32mWoodenSword\033[0m", "\033[32mIron Sword\033[0m", 
+                    "\033[32mBuster Blade\033[0m", "\033[32mWarhammer\033[0m",
+                    "\033[32mDemon Slayer\033[0m"]
+    weapon_prices = [45, 75, 150, 350, 500]
+    weapon_attacks = [10, 25, 50, 100, 185 ]
 
     while True:
-        print("\n=== Weapon Shop ===")
-        print("Gold:", player.gold)
+        print("\n\033[33m=== Weapon Shop ===\033[0m")
+        print("\033[33mGold:\033[0m", player.gold)
 
         for i in range(len(weapon_names)):
-            print(f"{i+1}. {weapon_names[i]} - {weapon_prices[i]} gold")
+            print(f"{i+1}. {weapon_names[i]} - ({weapon_prices[i]} \033[33mgold\033[0m) ({weapon_attacks[i]} \033[31mATK\033[0m)")
 
-        print("0. Back")
-        choice = input("Choose: ")
+        print("\033[31m0. Back\033[0m")
+        choice = input("\033[32mChoose: \033[0m")
 
         if choice == "0":
             break
@@ -44,24 +46,24 @@ def weapon_shop():
         if player.gold >= weapon_prices[index]:
             player.gold -= weapon_prices[index]
             save_item("Weapon", weapon_names[index], weapon_attacks[index], weapon_prices[index])
-            print("Bought!")
+            print("\033[33mBought!\033[0m")
         else:
-            print("Not enough gold!")
+            print("\033[31mNot enough gold!\033[0m")
 
 
 def armour_shop():
-    armour_names = ["Armor", "Heavy Armor"]
-    armour_prices = [100, 200]
-    armour_def = [10, 20]
+    armour_names = ["Leather armor", "Knights armor","Oblivion", "Juggernaut","Abyssal Knight"]
+    armour_prices = [75, 125, 300, 500, 850]
+    armour_def = [10, 50, 85, 120, 185 ]
 
     while True:
         print("\033[33m=== Armour Shop ===\033[0m")
-        print("Gold:", player.gold)
+        print("\033[33mGold:\033[0m", player.gold)
 
         for i in range(len(armour_names)):
-            print(f"{i+1}. {armour_names[i]} - {armour_prices[i]} gold")
+            print(f"{i+1}. {armour_names[i]} - ({armour_prices[i]} \033[33mgold\033[0m) ({armour_def[i]} \033[34mDef\033[0m)")
 
-        print("0. Back")
+        print("\033[31m0. Back\033[0m")
         choice = input("Choose: ")
 
         if choice == "0":
@@ -79,6 +81,6 @@ def armour_shop():
         if player.gold >= armour_prices[index]:
             player.gold -= armour_prices[index]
             save_item("Armour", armour_names[index], armour_def[index], armour_prices[index])
-            print("Bought!")
+            print("\033[33mBought!\033[0m")
         else:
-            print("Not enough gold!")
+            print("\033[31mNot enough gold!\033[0m")

@@ -10,10 +10,10 @@ inventory = []
 
 
 def show_inventory():
-    print("\n=== Inventory ===")
+    print("\n\033[32m=== Inventory ===\033[0m")
 
     if len(inventory) == 0:
-        print("Inventory is empty.")
+        print("\033[32mNo items in inventory.\033[0m")
     else:
         for i, item in enumerate(inventory):
             if item["type"] == "Weapon":
@@ -29,20 +29,20 @@ def show_stats():
     total_attack = base_attack + weapon_attack
     total_defense = base_defense + armour_defense
 
-    print("\n=== Player Stats ===")
-    print("Gold:", gold)
-    print("Total Attack:", total_attack)
-    print("Total Defense:", total_defense)
+    print("\n\033[33m=== Statistik Ni Nanay ===\033[0m")
+    print("\033[33mGold: \033[0m", gold)
+    print("\033[31mTotal Attack: \033[0m", total_attack)
+    print("\033[34mTotal Defense: \033[0m", total_defense)
 
 def use_item():
     global equipped_weapon, equipped_armour
 
     if len(inventory) == 0:
-        print("Inventory is empty.")
+        print("\033[32mNo items in inventory. Nothing to use.\033[0m")
         return
 
     show_inventory()
-    choice = input("Choose item number to equip (0 to cancel): ")
+    choice = input("\033[32mChoose an item to use (0 to cancel): \033[0m")
 
     if choice == "0":
         
@@ -50,13 +50,13 @@ def use_item():
          
 
     if not choice.isdigit():
-        print("Invalid input!")
+        print("\033[31mInvalid choice!\033[0m")
         return
 
     choice = int(choice)
 
     if choice < 1 or choice > len(inventory):
-        print("Invalid choice.")
+        print("\033[31mInvalid choice!\033[0m")
         return
 
     item = inventory[choice - 1]
@@ -73,71 +73,70 @@ def unequip_item():
     global equipped_weapon, equipped_armour
 
     while True:
-        print("\n=== Unequip Menu ===")
-        print("1. Unequip Weapon")
-        print("2. Unequip Armour")
-        print("3. Unequip All")
-        print("0. Back")
-
-        choice = input("Choose: ")
+        print("\n\033[0m=== Unequip an item ===\033[0m")
+        print("\033[32m1. Unequip Weapon \033[0m")
+        print("\033[32m2. Unequip Armour \033[0m")
+        print("\033[32m3. Unequip All \033[0m")
+        print("\033[32m0. Back \033[0m")
+        choice = input("\033[32mChoose: \033[0m")
 
         if choice == "1":
             if equipped_weapon:
-                print(f"{equipped_weapon['name']} unequipped.")
+                print(f"{equipped_weapon['name']} has been unequipped.")
                 equipped_weapon = None
             else:
-                print("No weapon equipped.")
+                print("\033[32mNo weapon equipped.\033[0m")
 
         elif choice == "2":
             if equipped_armour:
-                print(f"{equipped_armour['name']} unequipped.")
+                print(f"{equipped_armour['name']} has been unequipped.")
                 equipped_armour = None
             else:
-                print("No armour equipped.")
+                print("\033[32mNo armour equipped.\033[0m")
 
         elif choice == "3":
             equipped_weapon = None
             equipped_armour = None
-            print("All equipment removed.")
+            print("\033[32mAll items have been unequipped.\033[0m")
 
         elif choice == "0":
             break
 
         else:
-            print("Invalid choice.")
+            print("\033[31mInvalid choice!.\033[0m")
             
 def sell_item():
     global gold, equipped_weapon, equipped_armour
 
     if len(inventory) == 0:
-        print("Inventory is empty. Nothing to sell.")
+        print("\033[32mNo items in inventory. Nothing to sell.\033[0m")
         return
 
     show_inventory()
-    choice = input("Choose item number to sell (0 to cancel): ")
+    choice = input("\033[32mChoose an item to sell (0 to cancel): \033[0m")
 
     if choice == "0":
         return
 
     if not choice.isdigit():
-        print("Invalid input!")
+        print("\033[31mInvalid choice!\033[0m")
         return
 
     choice = int(choice)
 
     if choice < 1 or choice > len(inventory):
-        print("Invalid item number.")
+        print("\033[31mInvalid item number!.\033[0m")
         return
 
     item = inventory[choice - 1]
 
     # Prevent selling equipped items
     if equipped_weapon is not None and item == equipped_weapon:
-        print("You cannot sell an equipped weapon. Unequip it first.")
+        print("\033[31mYou cannot sell equipped Weapon. Please unequip it first. \033[0m")
         return
 
     if equipped_armour is not None and item == equipped_armour:
-        print("You cannot sell equipped armour. Unequip it first.")
+        print("\033[31mYou cannot sell equipped Armour. Please unequip it first. \033[0m")
         return
 
     sell_price = item["price"] // 2
@@ -145,5 +144,5 @@ def sell_item():
 
     sold_item = inventory.pop(choice - 1)
 
-    print(f"You sold {sold_item['name']} for {sell_price} gold!")
-    print("Gold:", gold)
+    print(f"\033[32mYou sold {sold_item['name']} for {sell_price} Gold!\033[0m")
+    print("\033[33mGold:\033[0m", gold)

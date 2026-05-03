@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # save_load.py
 
 import json

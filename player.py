@@ -17,9 +17,9 @@ def show_inventory():
     else:
         for i, item in enumerate(inventory):
             if item["type"] == "Weapon":
-                print(f"{i+1}. {item['name']} (ATK +{item['power']}, Price {item['price']})")
+                print(f"{i+1}. {item['name']} (\033[31mATK\033[0m +{item['power']}, Price {item['price']})")
             elif item["type"] == "Armour":
-                print(f"{i+1}. {item['name']} (DEF +{item['power']}, Price {item['price']})")
+                print(f"{i+1}. {item['name']} (\033[34mDEF\033[0m +{item['power']}, Price {item['price']})")
 
 
 def show_stats():
@@ -29,7 +29,7 @@ def show_stats():
     total_attack = base_attack + weapon_attack
     total_defense = base_defense + armour_defense
 
-    print("\n\033[33m=== Statistik Ni Nanay ===\033[0m")
+    print("\n\033[33m=== Status ===\033[0m")
     print("\033[33mGold: \033[0m", gold)
     print("\033[31mTotal Attack: \033[0m", total_attack)
     print("\033[34mTotal Defense: \033[0m", total_defense)

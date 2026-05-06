@@ -28,7 +28,7 @@ def load_game():
             player.equipped_armour = data["equipped_armour"]
 
     except FileNotFoundError:
-        print("No save file found. Starting new game.")
+        print("\033[32mNo save file found. Starting new game.\033[0m")
 
 
 # save_load.py
@@ -60,6 +60,6 @@ def load_game():
             player.equipped_armour = data["equipped_armour"]
 
     except FileNotFoundError:
-        print("No save file found. Starting new game.")
+        print("\033[32mNo save file found. Starting new game.\033[0m")
 
 

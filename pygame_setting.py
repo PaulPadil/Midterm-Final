@@ -1,0 +1,15 @@
+# SETTINGS
+
+WIDTH = 1280
+HEIGHT = 720
+FPS = 60
+
+TITLE = "RPG Adventure"
+
+BACKGROUND_IMAGE = "background.jpg"
+
+# COLORS
+WHITE = (255, 255, 255)
+GOLD = (212, 175, 55)
+HOVER = (255, 220, 120)
+DARK = (20, 20, 20)

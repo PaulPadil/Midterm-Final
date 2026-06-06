@@ -68,3 +68,5 @@ class SettingsMenu:
 
         self.fullscreen_button.draw(screen)
         self.back_button.draw(screen)
+
+    

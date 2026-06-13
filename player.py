@@ -1,148 +1,147 @@
-# player.py
+import pygame
+from settings import *
+from world import world, is_solid
 
-gold = 1000
-base_attack = 10
-base_defense = 5
+class Player:
 
-equipped_weapon = None
-equipped_armour = None
-inventory = []
+    def __init__(self):
 
+        # =========================
+        # SIZE / HITBOX
+        # =========================
+        self.rect = pygame.Rect(
+            100,
+            0,
+            PLAYER_WIDTH,
+            PLAYER_HEIGHT
+        )
 
-def show_inventory():
-    print("\n\033[32m=== Inventory ===\033[0m")
+        self.vel_y = 0
+        self.on_ground = False
 
-    if len(inventory) == 0:
-        print("\033[32mNo items in inventory.\033[0m")
-    else:
-        for i, item in enumerate(inventory):
-            if item["type"] == "Weapon":
-                print(f"{i+1}. {item['name']} (\033[31mATK\033[0m +{item['power']}, Price {item['price']})")
-            elif item["type"] == "Armour":
-                print(f"{i+1}. {item['name']} (\033[34mDEF\033[0m +{item['power']}, Price {item['price']})")
+        self.facing_right = True
 
+        self.hp = 100
+        self.max_hp = 100
 
-def show_stats():
-    weapon_attack = equipped_weapon["power"] if equipped_weapon else 0
-    armour_defense = equipped_armour["power"] if equipped_armour else 0
+        self.has_sword = False
 
-    total_attack = base_attack + weapon_attack
-    total_defense = base_defense + armour_defense
+        # =========================
+        # LOAD SPRITE
+        # =========================
+        self.image = pygame.image.load("MC_idle.png").convert_alpha()
+        self.image = pygame.transform.scale(
+            self.image,
+            (PLAYER_WIDTH, PLAYER_HEIGHT)
+        )
 
-    print("\n\033[33m=== Status ===\033[0m")
-    print("\033[33mGold: \033[0m", gold)
-    print("\033[31mTotal Attack: \033[0m", total_attack)
-    print("\033[34mTotal Defense: \033[0m", total_defense)
+        # =========================
+        # PLACE PLAYER ON GROUND (IMPORTANT)
+        # =========================
+        self.place_on_ground()
 
-def use_item():
-    global equipped_weapon, equipped_armour
+    # =========================
+    # FIND GROUND BELOW PLAYER
+    # =========================
+    def place_on_ground(self):
 
-    if len(inventory) == 0:
-        print("\033[32mNo items in inventory. Nothing to use.\033[0m")
-        return
+        while True:
+            self.rect.y += 1
+            if self.collides_world():
+                self.rect.y -= 1
+                break
 
-    show_inventory()
-    choice = input("\033[32mChoose an item to use (0 to cancel): \033[0m")
+    # =========================
+    # WORLD COLLISION CHECK
+    # =========================
+    def collides_world(self):
 
-    if choice == "0":
-        
-        return
-         
+        for y in range(self.rect.top // TILE, self.rect.bottom // TILE + 1):
+            for x in range(self.rect.left // TILE, self.rect.right // TILE + 1):
 
-    if not choice.isdigit():
-        print("\033[31mInvalid choice!\033[0m")
-        return
+                if 0 <= x < WORLD_W and 0 <= y < WORLD_H:
 
-    choice = int(choice)
+                    if is_solid(world[y][x]):
+                        return True
 
-    if choice < 1 or choice > len(inventory):
-        print("\033[31mInvalid choice!\033[0m")
-        return
+        return False
 
-    item = inventory[choice - 1]
+    # =========================
+    # MOVEMENT
+    # =========================
+    def move(self):
 
-    if item["type"] == "Weapon":
-        equipped_weapon = item
-        print(f"Equipped {item['name']} (ATK +{item['power']})")
+        keys = pygame.key.get_pressed()
 
-    elif item["type"] == "Armour":
-        equipped_armour = item
-        print(f"Equipped {item['name']} (DEF +{item['power']})")
+        speed = PLAYER_SPEED
 
-def unequip_item():
-    global equipped_weapon, equipped_armour
+        if keys[pygame.K_LSHIFT] or keys[pygame.K_RSHIFT]:
+            speed = SPRINT_SPEED
 
-    while True:
-        print("\n\033[0m=== Unequip an item ===\033[0m")
-        print("\033[32m1. Unequip Weapon \033[0m")
-        print("\033[32m2. Unequip Armour \033[0m")
-        print("\033[32m3. Unequip All \033[0m")
-        print("\033[32m0. Back \033[0m")
-        choice = input("\033[32mChoose: \033[0m")
+        # LEFT
+        if keys[pygame.K_a]:
+            self.rect.x -= speed
+            self.facing_right = False
 
-        if choice == "1":
-            if equipped_weapon:
-                print(f"{equipped_weapon['name']} has been unequipped.")
-                equipped_weapon = None
-            else:
-                print("\033[32mNo weapon equipped.\033[0m")
+            if self.collides_world():
+                self.rect.x += speed
 
-        elif choice == "2":
-            if equipped_armour:
-                print(f"{equipped_armour['name']} has been unequipped.")
-                equipped_armour = None
-            else:
-                print("\033[32mNo armour equipped.\033[0m")
+        # RIGHT
+        if keys[pygame.K_d]:
+            self.rect.x += speed
+            self.facing_right = True
 
-        elif choice == "3":
-            equipped_weapon = None
-            equipped_armour = None
-            print("\033[32mAll items have been unequipped.\033[0m")
+            if self.collides_world():
+                self.rect.x -= speed
 
-        elif choice == "0":
-            break
+        # GRAVITY
+        self.vel_y += GRAVITY
+        self.rect.y += self.vel_y
 
+        if self.collides_world():
+            self.rect.y -= self.vel_y
+
+            if self.vel_y > 0:
+                self.on_ground = True
+
+            self.vel_y = 0
         else:
-            print("\033[31mInvalid choice!.\033[0m")
-            
-def sell_item():
-    global gold, equipped_weapon, equipped_armour
+            self.on_ground = False
 
-    if len(inventory) == 0:
-        print("\033[32mNo items in inventory. Nothing to sell.\033[0m")
-        return
+        # JUMP
+        if (keys[pygame.K_SPACE] or keys[pygame.K_w]) and self.on_ground:
+            self.vel_y = JUMP_POWER
 
-    show_inventory()
-    choice = input("\033[32mChoose an item to sell (0 to cancel): \033[0m")
+    # =========================
+    # DRAW
+    # =========================
+    def draw(self, screen):
 
-    if choice == "0":
-        return
+        img = self.image
 
-    if not choice.isdigit():
-        print("\033[31mInvalid choice!\033[0m")
-        return
+        if not self.facing_right:
+            img = pygame.transform.flip(img, True, False)
 
-    choice = int(choice)
+        screen.blit(img, self.rect)
 
-    if choice < 1 or choice > len(inventory):
-        print("\033[31mInvalid item number!.\033[0m")
-        return
+        # =========================
+        # SWORD VISUAL
+        # =========================
+        if self.has_sword:
 
-    item = inventory[choice - 1]
+            if self.facing_right:
+                sword = pygame.Rect(
+                    self.rect.right,
+                    self.rect.y + self.rect.height // 2,
+                    15,
+                    5
+                )
+            else:
+                sword = pygame.Rect(
+                    self.rect.left - 15,
+                    self.rect.y + self.rect.height // 2,
+                    15,
+                    5
+                )
 
-    # Prevent selling equipped items
-    if equipped_weapon is not None and item == equipped_weapon:
-        print("\033[31mYou cannot sell equipped Weapon. Please unequip it first. \033[0m")
-        return
-
-    if equipped_armour is not None and item == equipped_armour:
-        print("\033[31mYou cannot sell equipped Armour. Please unequip it first. \033[0m")
-        return
-
-    sell_price = item["price"] // 2
-    gold += sell_price
-
-    sold_item = inventory.pop(choice - 1)
-
-    print(f"\033[32mYou sold {sold_item['name']} for {sell_price} Gold!\033[0m")
-    print("\033[33mGold:\033[0m", gold)
+            pygame.draw.rect(screen, (220, 220, 220), sword)
